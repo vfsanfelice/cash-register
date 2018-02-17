@@ -1,5 +1,6 @@
 const Transaction = require('../models/transaction');
 
+// find all documents
 const find = async (req, res) => {
     try {
         const transactions = await Transaction.find();
@@ -8,18 +9,6 @@ const find = async (req, res) => {
         res.status(500, 'ERROR GETTING TRANSACTIONS');
     }
 };
-
-/* const remove = async (req, res) => {
-    try {
-        const id = req.params.id;
-        Transaction.remove(query, removeTransaction(err, removedTransaction) => {
-
-        });
-        res.json(removedTransaction);
-    } catch (err) {
-        res.status(500, 'Error deleting transaction');
-    }
-} */
 
 module.exports = {
     find
