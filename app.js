@@ -10,13 +10,12 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 // ROUTES
-app.use((req, res, next) => {
-    console.log('Something is happening');
-    next();
+app.get('/', (req, res) => {
+    res.json({message: 'Server is working fine.'});
 });
 
-app.get('/', (req, res) => {
-    res.json({message: 'welcome to api!'});
+app.use((req, res, next) => {
+    next();
 });
 
 //User API
@@ -42,6 +41,18 @@ app.post('/user', function user(req, res) {
         }
         res.json(addUser);
     });
+});
+
+// Do Login with user information
+app.post('/login',  function login(req, res) {
+    var userInfo = req.body;
+    
+    User.findOne( {'username' : userInfo.username, 'password': userInfo.password }, function getUser(err, user) {
+        if (err || !user) {
+            res.status(422, 'Invalid Login');
+        }
+        res.json(user);
+    })
 });
 
 //Transaction API
@@ -104,8 +115,9 @@ app.put('/transaction/:_id', function transaction(req, res){
 
 
 // Load index.html file
-app.get('*', (req, res) => {
-    res.sendfile('./public/index.html')
+app.get('/app/*', (req, res) => {
+    console.log('angular route');
+    res.sendFile('./public/initial.html', {root: __dirname});
 });
 
 // Start server
