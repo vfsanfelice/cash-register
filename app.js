@@ -58,6 +58,54 @@ app.post('/login',  function login(req, res) {
 //Transaction API
 const Transaction = require('./app/models/transaction');
 
+// Total on the last 30 days
+app.get('/month',  function transaction(req, res) {
+    var time = new Date().getTime() - 30*24*60*60*1000;
+    Transaction.aggregate([
+        {
+            $match: {
+                transactionDate: {$gt: new Date(time)}
+            } 
+        },
+        {
+            $group: {
+                _id: null,
+                count: {$sum: '$amount'}
+            }
+        }
+    ], function (err, result) {
+        if (err) {
+            next(err);
+        } else {
+            res.json(result);
+        }
+    });
+});
+
+// Total today
+app.get('/today',  function transaction(req, res) {
+    var time = new Date().getTime() - 1*24*60*60*1000;
+    Transaction.aggregate([
+        {
+            $match: {
+                transactionDate: {$gt: new Date(time)}
+            } 
+        },
+        {
+            $group: {
+                _id: null,
+                count: {$sum: '$amount'}
+            }
+        }
+    ], function (err, result) {
+        if (err) {
+            next(err);
+        } else {
+            res.json(result);
+        }
+    });
+});
+
 // List all transactions
 app.get('/transaction',  function transaction(req, res) {
     Transaction.find(function getTransaction(err, transactions) {
@@ -94,7 +142,6 @@ app.delete('/transaction/:_id', function delTransaction(req, res) {
 // Update one transaction
 app.put('/transaction/:_id', function transaction(req, res){
     const currentTransaction = req.body;
-    console.log(req.body);
     const query = req.params._id;
     const update = {
         '$set': {

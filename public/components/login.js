@@ -7,6 +7,7 @@ cashregister.component('login', {
     template: 
     ['<div class="login-page">',
         '<div class="form">',
+        '<span class="span-error">{{lc.errorMessage}}</span>',
         '<form class="login-form" ng-submit="">',
             '<input type="text" placeholder="username" ng-model="lc.login.username"/>',
             '<input type="password" placeholder="password" ng-model="lc.login.password"/>',
@@ -28,6 +29,7 @@ function LoginController($scope, $http, $state, userService) {
         };
         
         vm.invalidLogin = false;
+        vm.errorMessage = '';
 
         vm.doLogin = doLogin;
     };
@@ -39,6 +41,7 @@ function LoginController($scope, $http, $state, userService) {
                 $state.go('homePage');
             }, function errorFunction() {
                 vm.invalidLogin = true;
+                vm.errorMessage = 'User not found';
             })
     }
 }
